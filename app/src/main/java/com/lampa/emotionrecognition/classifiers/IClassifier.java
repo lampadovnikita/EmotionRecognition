@@ -1,13 +1,13 @@
 package com.lampa.emotionrecognition.classifiers;
 
-import android.util.ArrayMap;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface IClassifier {
-    ArrayMap<String, Float> classify(float[] input);
+    Map<String, Float> classify(float[] input);
 
     ArrayList<String> loadLabels(String fileName);
 

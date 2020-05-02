@@ -6,6 +6,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.util.ArrayMap;
 
+import java.util.Map;
+
 
 public class TFLiteImageClassifier extends TFLiteClassifier {
 
@@ -31,7 +33,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
     }
 
     @Override
-    public ArrayMap<String, Float> classify(float[] input) {
+    public Map<String, Float> classify(float[] input) {
         int colorDimSize;
         switch (mImageColorMode) {
             case RGB:
@@ -69,7 +71,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
         return outputMap;
     }
 
-    public ArrayMap<String, Float> classify(Bitmap imageBitmap, boolean useFilter) {
+    public Map<String, Float> classify(Bitmap imageBitmap, boolean useFilter) {
         float[] preprocessedImage = preprocessImage(imageBitmap, useFilter);
 
         return classify(preprocessedImage);

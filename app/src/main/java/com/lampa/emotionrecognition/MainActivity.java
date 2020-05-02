@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void classifyEmotions(Bitmap imageBitmap) {
         ArrayMap<String, Float> result =
-                mClassifier.classify(
-                        imageBitmap,
-                        true);
+                (ArrayMap<String, Float>) mClassifier.classify(
+                       imageBitmap,
+                       true);
 
         int maxIndex = 0;
         for (int i = 1; i < result.size(); i++) {
