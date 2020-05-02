@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.util.ArrayMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -57,7 +58,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
 
         mTFLiteInterpreter.run(formattedInput, outputArr);
 
-        ArrayMap<String, Float> outputMap = new ArrayMap<>();
+        Map<String, Float> outputMap = new HashMap<>();
 
         String predictedLabel;
         float probability;

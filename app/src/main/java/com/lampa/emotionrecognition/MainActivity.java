@@ -35,7 +35,9 @@ import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Button pickImageButton;
 
-    private TextView resultTextView;
-
     private ExpandableListView classificationExpandableListView;
 
     @Override
@@ -83,14 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
         faceImageView = findViewById(R.id.face_image_view);
 
-        resultTextView = findViewById(R.id.result_text_view);
-
         pickImageButton = findViewById(R.id.pick_image_button);
         pickImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickFromGallery();
-                resultTextView.setText(R.string.result_text_view);
+
             }
         });
 
@@ -223,31 +221,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void classifyEmotions(Bitmap imageBitmap) {
-        ArrayMap<String, Float> result =
-                (ArrayMap<String, Float>) mClassifier.classify(
-                       imageBitmap,
-                       true);
+        HashMap<String, Float> result =
+                (HashMap<String, Float>) mClassifier.classify(
+                        imageBitmap,
+                        true);
 
-        int maxIndex = 0;
-        for (int i = 1; i < result.size(); i++) {
-            if (result.valueAt(i) > result.valueAt(maxIndex)) {
-                maxIndex = i;
-            }
-        }
+        LinkedHashMap<String, Float> sortedResult = new LinkedHashMap<>();
 
-        String maxLabel = result.keyAt(maxIndex);
-        resultTextView.append(maxLabel);
+        result.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .forEachOrdered(x -> sortedResult.put(x.getKey(), x.getValue()));
 
         HashMap<String, List<Pair<String, String>>> item = new HashMap<>();
 
         ArrayList<Pair<String, String>> faceGroup = new ArrayList<>();
-        for (Map.Entry<String, Float> entry : result.entrySet()) {
+        for (Map.Entry<String, Float> entry : sortedResult.entrySet()) {
             String percentage = String.format("%.2f%%", entry.getValue() * 100);
             faceGroup.add(new Pair<>(entry.getKey(), percentage));
         }
 
         item.put("face1", faceGroup);
-
 
         ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
         classificationExpandableListView.setAdapter(adapter);
