@@ -14,8 +14,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.ArrayMap;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,7 +34,10 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,13 +55,15 @@ public class MainActivity extends AppCompatActivity {
 
     private TFLiteImageClassifier mClassifier;
 
+    private ProgressBar classificationProgressBar;
+
     private ImageView faceImageView;
 
     private Button pickImageButton;
 
     private TextView resultTextView;
 
-    private ProgressBar classificationProgressBar;
+    private ExpandableListView classificationExpandableListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        classificationExpandableListView = findViewById(R.id.classification_expandable_list_view);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -229,6 +237,22 @@ public class MainActivity extends AppCompatActivity {
 
         String maxLabel = result.keyAt(maxIndex);
         resultTextView.append(maxLabel);
+
+        HashMap<String, List<Pair<String, String>>> item = new HashMap<>();
+
+        ArrayList<Pair<String, String>> faceGroup = new ArrayList<>();
+        for (Map.Entry<String, Float> entry : result.entrySet()) {
+            String percentage = String.format("%.2f%%", entry.getValue() * 100);
+            faceGroup.add(new Pair<>(entry.getKey(), percentage));
+        }
+
+        item.put("face1", faceGroup);
+
+
+        ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
+        classificationExpandableListView.setAdapter(adapter);
+
+        classificationExpandableListView.expandGroup(0);
     }
 
     private void pickFromGallery() {

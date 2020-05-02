@@ -19,10 +19,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -48,6 +48,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/result_text_view" />
+
+        <ExpandableListView
+            android:id="@+id/classification_expandable_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:childDivider="#ccc"
+            android:divider="#999"
+            android:dividerHeight="1.5dp" />
 
     </LinearLayout>
 

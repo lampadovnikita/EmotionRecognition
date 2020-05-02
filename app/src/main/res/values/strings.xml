@@ -2,4 +2,5 @@
     <string name="app_name">EmotionRecognition</string>
     <string name="pick_image_button">Загрузить изображение</string>
     <string name="result_text_view">Эмоция на изображении: </string>
+    <string name="classification_delimiter_text_view">-</string>
 </resources>
