@@ -13,14 +13,12 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.ArrayMap;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ExpandableListView classificationExpandableListView;
 
+    HashMap<String, List<Pair<String, String>>> item;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 FER2013_IMAGE_HEIGHT,
                 TFLiteImageClassifier.ImageColorMode.GREYSCALE);
 
+        item = new HashMap<>();
 
         faceImageView = findViewById(R.id.face_image_view);
 
@@ -124,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                                 true);
 
                         faceImageView.setImageBitmap(scaledPickedImageBitmap);
+                        item.clear();
+
                         setCalculationStatusUI(true);
 
                         detectFaces(scaledPickedImageBitmap);
@@ -173,27 +176,57 @@ public class MainActivity extends AppCompatActivity {
                                                 0,
                                                 null);
 
-                                        Paint rectPaint = new Paint();
-                                        rectPaint.setColor(Color.GREEN);
-                                        rectPaint.setStrokeWidth(2);
-                                        rectPaint.setStyle(Paint.Style.STROKE);
+                                        Paint paint = new Paint();
+                                        paint.setColor(Color.GREEN);
+                                        paint.setStrokeWidth(2);
+                                        paint.setStyle(Paint.Style.STROKE);
+                                        paint.setTextSize(40);
 
                                         if (!faces.isEmpty()) {
-                                            FirebaseVisionFace face = faces.get(0);
+                                            int faceId = 1;
+                                            for (FirebaseVisionFace face : faces) {
+                                                Rect faceRect = face.getBoundingBox();
+                                                tmpCanvas.drawRect(faceRect, paint);
+                                                tmpCanvas.drawText(Integer.toString(faceId), faceRect.left + 20, faceRect.bottom - 20, paint);
 
-                                            Rect faceRect = face.getBoundingBox();
-                                            tmpCanvas.drawRect(faceRect, rectPaint);
+                                                faceId++;
+                                            }
 
                                             faceImageView.setImageBitmap(tmpBitmap);
 
-                                            Bitmap faceBitmap = Bitmap.createBitmap(
-                                                    imageBitmap,
-                                                    faceRect.left,
-                                                    faceRect.top,
-                                                    faceRect.width(),
-                                                    faceRect.height());
+                                            faceId = 1;
+                                            for (FirebaseVisionFace face : faces) {
+                                                Rect faceRect = face.getBoundingBox();
 
-                                            classifyEmotions(faceBitmap);
+                                                if (faceRect.top < 0) {
+                                                    faceRect.top = 0;
+                                                }
+                                                if (faceRect.left < 0) {
+                                                    faceRect.left = 0;
+                                                }
+                                                if (faceRect.bottom > imageBitmap.getHeight()) {
+                                                    faceRect.bottom = imageBitmap.getHeight();
+                                                }
+                                                if (faceRect.right > imageBitmap.getWidth()) {
+                                                    faceRect.right = imageBitmap.getWidth();
+                                                }
+
+                                                Bitmap faceBitmap = Bitmap.createBitmap(
+                                                        imageBitmap,
+                                                        faceRect.left,
+                                                        faceRect.top,
+                                                        faceRect.width(),
+                                                        faceRect.height());
+
+                                                classifyEmotions(faceBitmap, faceId);
+
+                                                faceId++;
+                                            }
+
+                                            ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
+                                            classificationExpandableListView.setAdapter(adapter);
+
+                                            classificationExpandableListView.expandGroup(0);
 
                                         } else {
                                             Toast.makeText(
@@ -220,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
     }
 
-    private void classifyEmotions(Bitmap imageBitmap) {
+    private void classifyEmotions(Bitmap imageBitmap, int faceId) {
         HashMap<String, Float> result =
                 (HashMap<String, Float>) mClassifier.classify(
                         imageBitmap,
@@ -233,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .forEachOrdered(x -> sortedResult.put(x.getKey(), x.getValue()));
 
-        HashMap<String, List<Pair<String, String>>> item = new HashMap<>();
 
         ArrayList<Pair<String, String>> faceGroup = new ArrayList<>();
         for (Map.Entry<String, Float> entry : sortedResult.entrySet()) {
@@ -241,12 +273,8 @@ public class MainActivity extends AppCompatActivity {
             faceGroup.add(new Pair<>(entry.getKey(), percentage));
         }
 
-        item.put("face1", faceGroup);
-
-        ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
-        classificationExpandableListView.setAdapter(adapter);
-
-        classificationExpandableListView.expandGroup(0);
+        String groupName = "Face " + faceId;
+        item.put(groupName, faceGroup);
     }
 
     private void pickFromGallery() {
