@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,7 @@ import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -142,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
                                 scaledHeight,
                                 true);
 
-                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, pickedImageUri.getPath());
+
+                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, pickedImageUri);
 
                         imageView.setImageBitmap(scaledPickedImageBitmap);
                         item.clear();
@@ -169,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                     (int) (pickedImageBitmap.getHeight() *
                                             ((float) SCALED_IMAGE_WIDTH / pickedImageBitmap.getWidth()));
                         } else {
-                            scaledHeight = (SCALED_IMAGE_WIDTH / 4) * 3;
+                            scaledHeight = SCALED_IMAGE_WIDTH;
                         }
 
                         Bitmap scaledPickedImageBitmap = Bitmap.createScaledBitmap(
@@ -178,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                                 scaledHeight,
                                 true);
 
-                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, photoUri.getPath());
+                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, photoUri);
 
                         imageView.setImageBitmap(scaledPickedImageBitmap);
                         item.clear();
@@ -196,8 +199,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, String imagePath) throws IOException {
-        int orientationAngle = getOrientationAngle(imagePath);
+    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) throws IOException {
+        int orientationAngle = getOrientationAngle(imageUri);
         if (orientationAngle != 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(orientationAngle);
@@ -214,10 +217,14 @@ public class MainActivity extends AppCompatActivity {
         return imageBitmap;
     }
 
-    public int getOrientationAngle(String path) {
+    public int getOrientationAngle(Uri uri) {
         int degree = 0;
         try {
-            ExifInterface exifInterface = new ExifInterface(path);
+            Log.d(TAG, uri.toString());
+
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            ExifInterface exifInterface = new ExifInterface(inputStream);
+
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
@@ -273,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "PNG_" + timeStamp;
+        String imageFileName = "PNG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,
