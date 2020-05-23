@@ -2,16 +2,20 @@ package com.lampa.emotionrecognition;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.exifinterface.media.ExifInterface;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Pair;
 import android.view.View;
@@ -31,9 +35,12 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
 
-    private final int GALLERY_REQUEST_CODE = 0;
+    private static final int GALLERY_REQUEST_CODE = 0;
+    private static final int TAKE_PHOTO_REQUEST = 1;
 
     private final String FER2013_V1_MODEL_FILE_NAME = "fer2013_v1.tflite";
     private final String FER2013_V1_LABELS_FILE_NAME = "labels_fer2013_v1.txt";
@@ -57,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar classificationProgressBar;
 
-    private ImageView faceImageView;
+    private ImageView imageView;
 
     private Button pickImageButton;
+    private Button takePhotoButton;
 
     private ExpandableListView classificationExpandableListView;
+
+    private Uri mCurrentPhotoUri;
+    String mCurrentPhotoPath;
 
     HashMap<String, List<Pair<String, String>>> item;
 
@@ -82,14 +94,21 @@ public class MainActivity extends AppCompatActivity {
 
         item = new HashMap<>();
 
-        faceImageView = findViewById(R.id.face_image_view);
+        imageView = findViewById(R.id.face_image_view);
 
         pickImageButton = findViewById(R.id.pick_image_button);
         pickImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickFromGallery();
+            }
+        });
 
+        takePhotoButton = findViewById(R.id.take_photo_button);
+        takePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePhoto();
             }
         });
 
@@ -102,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case GALLERY_REQUEST_CODE:
-
                     Uri pickedImageUri = data.getData();
                     try {
                         Bitmap pickedImageBitmap = MediaStore.Images.Media.getBitmap(
@@ -124,7 +142,9 @@ public class MainActivity extends AppCompatActivity {
                                 scaledHeight,
                                 true);
 
-                        faceImageView.setImageBitmap(scaledPickedImageBitmap);
+                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, pickedImageUri.getPath());
+
+                        imageView.setImageBitmap(scaledPickedImageBitmap);
                         item.clear();
 
                         setCalculationStatusUI(true);
@@ -136,10 +156,133 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
 
+                case TAKE_PHOTO_REQUEST:
+                    Uri photoUri = mCurrentPhotoUri;
+                    try {
+                        Bitmap pickedImageBitmap = MediaStore.Images.Media.getBitmap(
+                                this.getContentResolver(),
+                                photoUri);
+
+                        int scaledHeight;
+                        if (pickedImageBitmap.getHeight() > pickedImageBitmap.getWidth()) {
+                            scaledHeight =
+                                    (int) (pickedImageBitmap.getHeight() *
+                                            ((float) SCALED_IMAGE_WIDTH / pickedImageBitmap.getWidth()));
+                        } else {
+                            scaledHeight = (SCALED_IMAGE_WIDTH / 4) * 3;
+                        }
+
+                        Bitmap scaledPickedImageBitmap = Bitmap.createScaledBitmap(
+                                pickedImageBitmap,
+                                SCALED_IMAGE_WIDTH,
+                                scaledHeight,
+                                true);
+
+                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, photoUri.getPath());
+
+                        imageView.setImageBitmap(scaledPickedImageBitmap);
+                        item.clear();
+
+                        setCalculationStatusUI(true);
+
+                        detectFaces(scaledPickedImageBitmap);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 default:
                     break;
             }
         }
+    }
+
+    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, String imagePath) throws IOException {
+        int orientationAngle = getOrientationAngle(imagePath);
+        if (orientationAngle != 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientationAngle);
+            imageBitmap = Bitmap.createBitmap(
+                    imageBitmap,
+                    0,
+                    0,
+                    imageBitmap.getWidth(),
+                    imageBitmap.getHeight(),
+                    matrix,
+                    true);
+        }
+
+        return imageBitmap;
+    }
+
+    public int getOrientationAngle(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    private void pickFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+
+        String[] mimeTypes = {"image/png", "image/jpg"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+    }
+
+    private void takePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Удостоверимся, что есть активность камеры, которая обработает интент
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (photoFile != null) {
+                mCurrentPhotoUri = FileProvider.getUriForFile(
+                        this,
+                        "com.lampa.emotionrecognition.fileprovider",
+                        photoFile);
+
+//                mCurrentPhotoUri = Uri.fromFile(photoFile);
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
+                startActivityForResult(intent, TAKE_PHOTO_REQUEST);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".png",
+                storageDir
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void detectFaces(Bitmap imageBitmap) {
@@ -192,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                                                 faceId++;
                                             }
 
-                                            faceImageView.setImageBitmap(tmpBitmap);
+                                            imageView.setImageBitmap(tmpBitmap);
 
                                             faceId = 1;
                                             for (FirebaseVisionFace face : faces) {
@@ -273,26 +416,18 @@ public class MainActivity extends AppCompatActivity {
             faceGroup.add(new Pair<>(entry.getKey(), percentage));
         }
 
-        String groupName = "Face " + faceId;
+        String groupName = "Лицо " + faceId;
         item.put(groupName, faceGroup);
-    }
-
-    private void pickFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-
-        String[] mimeTypes = {"image/png", "image/jpg"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
-        startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
     private void setCalculationStatusUI(boolean isCalculationRunning) {
         if (isCalculationRunning) {
             classificationProgressBar.setVisibility(ProgressBar.VISIBLE);
+            takePhotoButton.setEnabled(false);
             pickImageButton.setEnabled(false);
         } else {
             classificationProgressBar.setVisibility(ProgressBar.INVISIBLE);
+            takePhotoButton.setEnabled(true);
             pickImageButton.setEnabled(true);
         }
     }

@@ -4,7 +4,6 @@ import com.lampa.emotionrecognition.utils.ImagePreprocessor;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.util.ArrayMap;
 
 import java.util.HashMap;
 import java.util.Map;
