@@ -75,11 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private ExpandableListView classificationExpandableListView;
 
     private Uri mCurrentPhotoUri;
-    private String mCurrentPhotoPath;
 
     private HashMap<String, List<Pair<String, String>>> item;
-
-    private Bitmap displayedImageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
                 storageDir
         );
 
-        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
