@@ -4,4 +4,6 @@
     <string name="take_photo_button">Сделать фото</string>
     <string name="result_text_view">Эмоция на изображении: </string>
     <string name="classification_delimiter_text_view">-</string>
+    <string name="face">face</string>
+    <string name="faceless">No face detected</string>
 </resources>

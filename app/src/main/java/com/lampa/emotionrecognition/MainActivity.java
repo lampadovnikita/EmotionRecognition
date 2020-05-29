@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                     scaledHeight,
                     true);
 
-
             scaledImageBitmap = rotateToNormalOrientation(scaledImageBitmap, imageUri);
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         return scaledImageBitmap;
     }
 
-    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) throws IOException {
+    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) {
         int orientationAngle = getOrientationAngle(imageUri);
         if (orientationAngle != 0) {
             Matrix matrix = new Matrix();
@@ -360,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
                                         } else {
                                             Toast.makeText(
                                                     MainActivity.this,
-                                                    "No face detected",
+                                                    getString(R.string.faceless),
                                                     Toast.LENGTH_LONG
                                             ).show();
                                         }
@@ -402,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
             faceGroup.add(new Pair<>(entry.getKey(), percentage));
         }
 
-        String groupName = "Лицо " + faceId;
+        String groupName = getString(R.string.face) + faceId;
         item.put(groupName, faceGroup);
     }
 
