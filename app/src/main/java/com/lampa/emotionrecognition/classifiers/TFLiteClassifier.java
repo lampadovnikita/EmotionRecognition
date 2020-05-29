@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 
 import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.gpu.GpuDelegate;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,7 +28,9 @@ public abstract class TFLiteClassifier implements IClassifier {
     TFLiteClassifier(AssetManager assetManager, String modelFileName, String labelsFileName) {
         mAssetManager = assetManager;
 
-        mTFLiteInterpreterOptions = new Interpreter.Options();
+        GpuDelegate delegate = new GpuDelegate();
+        mTFLiteInterpreterOptions = new Interpreter.Options().addDelegate(delegate);
+
         try {
             mTFLiteInterpreter = new Interpreter(loadModel(modelFileName), mTFLiteInterpreterOptions);
         } catch (Exception ex) {
