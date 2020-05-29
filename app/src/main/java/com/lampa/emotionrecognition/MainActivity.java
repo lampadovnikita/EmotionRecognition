@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             if (photoFile != null) {
                 mCurrentPhotoUri = FileProvider.getUriForFile(
                         this,
-                        "com.lampa.emotionrecognition.fileprovider",
+                        BuildConfig.APPLICATION_ID + ".fileprovider",
                         photoFile);
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
