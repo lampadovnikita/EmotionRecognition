@@ -20,13 +20,16 @@ public abstract class TFLiteClassifier implements IClassifier {
 
     protected Interpreter mTFLiteInterpreter;
 
+    protected Interpreter.Options mTFLiteInterpreterOptions;
+
     protected List<String> mLabels;
 
     TFLiteClassifier(AssetManager assetManager, String modelFileName, String labelsFileName) {
         mAssetManager = assetManager;
 
+        mTFLiteInterpreterOptions = new Interpreter.Options();
         try {
-            mTFLiteInterpreter = new Interpreter(loadModel(modelFileName));
+            mTFLiteInterpreter = new Interpreter(loadModel(modelFileName), mTFLiteInterpreterOptions);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
