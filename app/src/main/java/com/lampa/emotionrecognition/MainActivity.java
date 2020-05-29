@@ -124,79 +124,60 @@ public class MainActivity extends AppCompatActivity {
             switch (requestCode) {
                 case GALLERY_REQUEST_CODE:
                     Uri pickedImageUri = data.getData();
-                    try {
-                        Bitmap pickedImageBitmap = MediaStore.Images.Media.getBitmap(
-                                this.getContentResolver(),
-                                pickedImageUri);
-
-                        int scaledHeight;
-                        if (pickedImageBitmap.getHeight() > pickedImageBitmap.getWidth()) {
-                            scaledHeight =
-                                    (int) (pickedImageBitmap.getHeight() *
-                                            ((float) SCALED_IMAGE_WIDTH / pickedImageBitmap.getWidth()));
-                        } else {
-                            scaledHeight = (SCALED_IMAGE_WIDTH / 3) * 4;
-                        }
-
-                        Bitmap scaledPickedImageBitmap = Bitmap.createScaledBitmap(
-                                pickedImageBitmap,
-                                SCALED_IMAGE_WIDTH,
-                                scaledHeight,
-                                true);
-
-
-                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, pickedImageUri);
-
-                        imageView.setImageBitmap(scaledPickedImageBitmap);
-                        item.clear();
-
-                        setCalculationStatusUI(true);
-
-                        detectFaces(scaledPickedImageBitmap);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    processImageRequestResult(pickedImageUri);
                     break;
 
                 case TAKE_PHOTO_REQUEST:
-                    Uri photoUri = mCurrentPhotoUri;
-                    try {
-                        Bitmap pickedImageBitmap = MediaStore.Images.Media.getBitmap(
-                                this.getContentResolver(),
-                                photoUri);
+                    processImageRequestResult(mCurrentPhotoUri);
+                    break;
 
-                        int scaledHeight;
-                        if (pickedImageBitmap.getHeight() > pickedImageBitmap.getWidth()) {
-                            scaledHeight =
-                                    (int) (pickedImageBitmap.getHeight() *
-                                            ((float) SCALED_IMAGE_WIDTH / pickedImageBitmap.getWidth()));
-                        } else {
-                            scaledHeight = SCALED_IMAGE_WIDTH;
-                        }
-
-                        Bitmap scaledPickedImageBitmap = Bitmap.createScaledBitmap(
-                                pickedImageBitmap,
-                                SCALED_IMAGE_WIDTH,
-                                scaledHeight,
-                                true);
-
-                        scaledPickedImageBitmap = rotateToNormalOrientation(scaledPickedImageBitmap, photoUri);
-
-                        imageView.setImageBitmap(scaledPickedImageBitmap);
-                        item.clear();
-
-                        setCalculationStatusUI(true);
-
-                        detectFaces(scaledPickedImageBitmap);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 default:
                     break;
             }
         }
+    }
+
+    private void processImageRequestResult(Uri resultImageUri) {
+        Bitmap scaledResultImageBitmap = getScaledImageBitmap(resultImageUri);
+
+        imageView.setImageBitmap(scaledResultImageBitmap);
+        item.clear();
+
+        setCalculationStatusUI(true);
+
+        detectFaces(scaledResultImageBitmap);
+    }
+
+    private Bitmap getScaledImageBitmap(Uri imageUri) {
+        Bitmap scaledImageBitmap = null;
+
+        try {
+            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(),
+                    imageUri);
+
+            int scaledHeight;
+            if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
+                scaledHeight =
+                        (int) (imageBitmap.getHeight() *
+                                ((float) SCALED_IMAGE_WIDTH / imageBitmap.getWidth()));
+            } else {
+                scaledHeight = (SCALED_IMAGE_WIDTH / 3) * 4;
+            }
+
+            scaledImageBitmap = Bitmap.createScaledBitmap(
+                    imageBitmap,
+                    SCALED_IMAGE_WIDTH,
+                    scaledHeight,
+                    true);
+
+
+            scaledImageBitmap = rotateToNormalOrientation(scaledImageBitmap, imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return scaledImageBitmap;
     }
 
     public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) throws IOException {
@@ -269,8 +250,6 @@ public class MainActivity extends AppCompatActivity {
                         this,
                         "com.lampa.emotionrecognition.fileprovider",
                         photoFile);
-
-//                mCurrentPhotoUri = Uri.fromFile(photoFile);
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
                 startActivityForResult(intent, TAKE_PHOTO_REQUEST);
