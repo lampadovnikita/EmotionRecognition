@@ -43,13 +43,12 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
                 colorDimSize = 1;
         }
 
-
         float[][][][] formattedInput = new float[1][mImageHeight][mImageWidth][colorDimSize];
 
         for (int y = 0; y < mImageHeight; y++) {
             for (int x = 0; x < mImageWidth; x++) {
                 for (int c = 0; c < colorDimSize; c++) {
-                    formattedInput[c][y][x][0] = input[y * mImageHeight + x * colorDimSize + c];
+                    formattedInput[0][y][x][c] = input[y * mImageHeight + x * colorDimSize + c];
                 }
             }
         }
