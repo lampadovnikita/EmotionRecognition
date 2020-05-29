@@ -75,9 +75,11 @@ public class MainActivity extends AppCompatActivity {
     private ExpandableListView classificationExpandableListView;
 
     private Uri mCurrentPhotoUri;
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
 
-    HashMap<String, List<Pair<String, String>>> item;
+    private HashMap<String, List<Pair<String, String>>> item;
+
+    private Bitmap displayedImageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
