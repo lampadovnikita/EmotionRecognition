@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -380,23 +381,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void classifyEmotions(Bitmap imageBitmap, int faceId) {
-        HashMap<String, Float> result =
-                (HashMap<String, Float>) mClassifier.classify(
+        Map<String, Float> result =
+                mClassifier.classify(
                         imageBitmap,
                         true);
 
-        LinkedHashMap<String, Float> sortedResult = new LinkedHashMap<>();
+        LinkedHashMap<String, Float> sortedResult = (LinkedHashMap<String, Float>) sortByValues(result);
 
-        result.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .forEachOrdered(x -> sortedResult.put(x.getKey(), x.getValue()));
+//        result.entrySet()
+//                .stream()
+//                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+//                .forEachOrdered(x -> sortedResult.put(x.getKey(), x.getValue()));
 
+
+        ArrayList<String> reversedKeys = new ArrayList<>(sortedResult.keySet());
+        Collections.reverse(reversedKeys);
 
         ArrayList<Pair<String, String>> faceGroup = new ArrayList<>();
-        for (Map.Entry<String, Float> entry : sortedResult.entrySet()) {
-            String percentage = String.format("%.2f%%", entry.getValue() * 100);
-            faceGroup.add(new Pair<>(entry.getKey(), percentage));
+        for (String key : reversedKeys) {
+            String percentage = String.format("%.2f%%", sortedResult.get(key) * 100);
+            faceGroup.add(new Pair<>(key, percentage));
         }
 
         String groupName = getString(R.string.face) + faceId;
@@ -413,6 +417,26 @@ public class MainActivity extends AppCompatActivity {
             takePhotoButton.setEnabled(true);
             pickImageButton.setEnabled(true);
         }
+    }
+
+    // Generic function to sort Map by Values using LinkedHashMap
+    public static <K,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map)
+    {
+        // create a List of map entries and sort it based on its values
+        List<Map.Entry<K,V>> mappings = new ArrayList<>(map.entrySet());
+        Collections.sort(mappings, (o1, o2) ->
+                o1.getValue().compareTo(o2.getValue()));
+
+        // create an empty insertion-ordered LinkedHashMap
+        Map<K,V> linkedHashMap = new LinkedHashMap<>();
+
+        // for every map entry in the sorted list, insert key-value
+        // pair in LinkedHashMap
+        for (Map.Entry<K,V> entry: mappings) {
+            linkedHashMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return linkedHashMap;
     }
 }
 
