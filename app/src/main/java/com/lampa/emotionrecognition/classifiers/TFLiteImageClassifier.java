@@ -5,6 +5,7 @@ import com.lampa.emotionrecognition.utils.ImagePreprocessor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,15 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
                 break;
             default:
                 colorDimSize = 1;
+        }
+
+        if (input.length != (mImageHeight * mImageWidth * colorDimSize)) {
+            Formatter formatter = new Formatter();
+
+            throw new IllegalArgumentException(formatter.format(
+                    "Input array length must be equal %1$d * %2$d * %3$d = %4$d, but actual length is %5$d",
+                    mImageHeight, mImageWidth, colorDimSize, mImageHeight * mImageWidth * colorDimSize,
+                    input.length).toString());
         }
 
         float[][][][] formattedInput = new float[1][mImageHeight][mImageWidth][colorDimSize];
