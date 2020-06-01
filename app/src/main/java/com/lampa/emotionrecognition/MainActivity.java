@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int TAKE_PHOTO_REQUEST = 1;
 
     private final String FER2013_V1_MODEL_FILE_NAME = "fer2013_v1.tflite";
-    private final String FER2013_V1_LABELS_FILE_NAME = "labels_fer2013_v1.txt";
 
     private final int FER2013_IMAGE_WIDTH = 48;
     private final int FER2013_IMAGE_HEIGHT = 48;
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         mClassifier = new TFLiteImageClassifier(
                 this.getAssets(),
                 FER2013_V1_MODEL_FILE_NAME,
-                FER2013_V1_LABELS_FILE_NAME,
+                getResources().getStringArray(R.array.emotions),
                 FER2013_IMAGE_WIDTH,
                 FER2013_IMAGE_HEIGHT,
                 TFLiteImageClassifier.ImageColorMode.GREYSCALE);

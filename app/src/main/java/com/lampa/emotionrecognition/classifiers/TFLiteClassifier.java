@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class TFLiteClassifier implements IClassifier {
@@ -25,7 +25,7 @@ public abstract class TFLiteClassifier implements IClassifier {
 
     protected List<String> mLabels;
 
-    TFLiteClassifier(AssetManager assetManager, String modelFileName, String labelsFileName) {
+    TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
         mAssetManager = assetManager;
 
         GpuDelegate delegate = new GpuDelegate();
@@ -37,7 +37,7 @@ public abstract class TFLiteClassifier implements IClassifier {
             ex.printStackTrace();
         }
 
-        mLabels = loadLabels(labelsFileName);
+        mLabels = new ArrayList<>(Arrays.asList(labels));
     }
 
     public MappedByteBuffer loadModel(String modelFileName) throws IOException {

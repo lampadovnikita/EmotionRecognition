@@ -20,10 +20,10 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
     private int mImageWidth;
     private int mImageHeight;
 
-    public TFLiteImageClassifier(AssetManager assetManager, String modelFileName, String labelsFileName,
+    public TFLiteImageClassifier(AssetManager assetManager, String modelFileName, String[] labels,
                                  int imageWidth, int imageHeight, ImageColorMode imageColorMode) {
 
-        super(assetManager, modelFileName, labelsFileName);
+        super(assetManager, modelFileName, labels);
 
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
