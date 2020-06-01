@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Uri mCurrentPhotoUri;
 
-    private HashMap<String, List<Pair<String, String>>> item;
+    private Map<String, List<Pair<String, String>>> item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 FER2013_IMAGE_HEIGHT,
                 TFLiteImageClassifier.ImageColorMode.GREYSCALE);
 
-        item = new HashMap<>();
+        item = new LinkedHashMap<>();
 
         imageView = findViewById(R.id.face_image_view);
 

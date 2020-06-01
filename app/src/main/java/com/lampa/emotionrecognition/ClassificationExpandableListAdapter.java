@@ -9,14 +9,15 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClassificationExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private HashMap<String, List<Pair<String, String>>> mStringListHashMap;
+    private Map<String, List<Pair<String, String>>> mStringListHashMap;
     private String[] mListHeaderGroup;
 
     public ClassificationExpandableListAdapter(
-            HashMap<String, List<Pair<String, String>>> stringListHashMap) {
+            Map<String, List<Pair<String, String>>> stringListHashMap) {
 
         mStringListHashMap = stringListHashMap;
         mListHeaderGroup = mStringListHashMap.keySet().toArray(new String[0]);
