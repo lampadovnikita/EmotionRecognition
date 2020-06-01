@@ -59,7 +59,7 @@ public abstract class TFLiteClassifier implements IClassifier {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(mAssetManager.open(labelsFileName), StandardCharsets.UTF_8));
+                    new InputStreamReader(mAssetManager.open(labelsFileName)));
 
             // do reading, usually loop until end of file reading
             String mLine;

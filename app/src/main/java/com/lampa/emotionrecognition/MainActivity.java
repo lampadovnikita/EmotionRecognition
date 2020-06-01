@@ -21,7 +21,6 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,9 +43,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -399,12 +396,6 @@ public class MainActivity extends AppCompatActivity {
                         true);
 
         LinkedHashMap<String, Float> sortedResult = (LinkedHashMap<String, Float>) SortingHelper.sortByValues(result);
-
-//        result.entrySet()
-//                .stream()
-//                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-//                .forEachOrdered(x -> sortedResult.put(x.getKey(), x.getValue()));
-
 
         ArrayList<String> reversedKeys = new ArrayList<>(sortedResult.keySet());
         Collections.reverse(reversedKeys);

@@ -1,6 +1,5 @@
 package com.lampa.emotionrecognition.classifiers;
 
-
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;

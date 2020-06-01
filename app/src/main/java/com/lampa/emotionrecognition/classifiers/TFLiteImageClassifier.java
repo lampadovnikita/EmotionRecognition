@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class TFLiteImageClassifier extends TFLiteClassifier {
 
     public enum ImageColorMode {

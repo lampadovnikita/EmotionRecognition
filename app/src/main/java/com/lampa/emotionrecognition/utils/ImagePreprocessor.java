@@ -6,9 +6,9 @@ import android.graphics.Color;
 public class ImagePreprocessor {
     public static int[] toGreyScale(Bitmap src) {
         // Константы для перевода пикселя в чёрно-белый полутоновый формат
-        final double RED_TO_GS = 0.299;
-        final double GREEN_TO_GS = 0.587;
-        final double BLUE_TO_GS = 0.114;
+        final double RED2GS = 0.299;
+        final double GREEN2GS = 0.587;
+        final double BLUE2GS = 0.114;
 
         // Информация о пикселе
         int pixel;
@@ -32,7 +32,7 @@ public class ImagePreprocessor {
                 bluePart = Color.blue(pixel);
 
                 // Переводим пиксель в чёрно-белый полутоновый формат
-                pixels[y * width + x] = (int) (redPart * RED_TO_GS + greenPart * GREEN_TO_GS + bluePart * BLUE_TO_GS);
+                pixels[y * width + x] = (int) (redPart * RED2GS + greenPart * GREEN2GS + bluePart * BLUE2GS);
             }
         }
 
