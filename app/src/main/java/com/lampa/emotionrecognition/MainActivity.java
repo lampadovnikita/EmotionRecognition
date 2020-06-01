@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             faceGroup.add(new Pair<>(key, percentage));
         }
 
-        String groupName = getString(R.string.face) + faceId;
+        String groupName = getString(R.string.face) + " " + faceId;
         item.put(groupName, faceGroup);
     }
 
