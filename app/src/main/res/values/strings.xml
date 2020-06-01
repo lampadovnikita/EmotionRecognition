@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">EmotionRecognition</string>
-    <string name="pick_image_button">Выбрать изображение</string>
-    <string name="take_photo_button">Сделать фото</string>
-    <string name="result_text_view">Эмоция на изображении: </string>
+    <string name="pick_image_button">Pick an image</string>
+    <string name="take_photo_button">Take a photo</string>
     <string name="classification_delimiter_text_view">-</string>
-    <string name="face">face</string>
+    <string name="face">Face</string>
     <string name="faceless">No face detected</string>
 </resources>
