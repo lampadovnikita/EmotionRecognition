@@ -21,6 +21,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -124,11 +125,13 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case GALLERY_REQUEST_CODE:
+                    clearClassificationExpandableListView();
                     Uri pickedImageUri = data.getData();
                     processImageRequestResult(pickedImageUri);
                     break;
 
                 case TAKE_PHOTO_REQUEST:
+                    clearClassificationExpandableListView();
                     processImageRequestResult(mCurrentPhotoUri);
                     break;
 
@@ -136,6 +139,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    void clearClassificationExpandableListView() {
+        Map<String, List<Pair<String, String>>> emptyMap = new LinkedHashMap<>();
+        ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(emptyMap);
+        classificationExpandableListView.setAdapter(adapter);
     }
 
     private void processImageRequestResult(Uri resultImageUri) {
@@ -354,7 +363,9 @@ public class MainActivity extends AppCompatActivity {
                                             ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
                                             classificationExpandableListView.setAdapter(adapter);
 
-                                            classificationExpandableListView.expandGroup(0);
+                                            if (faces.size() == 1) {
+                                                classificationExpandableListView.expandGroup(0);
+                                            }
 
                                         } else {
                                             Toast.makeText(
