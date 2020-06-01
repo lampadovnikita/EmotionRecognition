@@ -35,6 +35,7 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
+import com.lampa.emotionrecognition.utils.SortingHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -386,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                         imageBitmap,
                         true);
 
-        LinkedHashMap<String, Float> sortedResult = (LinkedHashMap<String, Float>) sortByValues(result);
+        LinkedHashMap<String, Float> sortedResult = (LinkedHashMap<String, Float>) SortingHelper.sortByValues(result);
 
 //        result.entrySet()
 //                .stream()
@@ -417,26 +418,6 @@ public class MainActivity extends AppCompatActivity {
             takePhotoButton.setEnabled(true);
             pickImageButton.setEnabled(true);
         }
-    }
-
-    // Generic function to sort Map by Values using LinkedHashMap
-    public static <K,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map)
-    {
-        // create a List of map entries and sort it based on its values
-        List<Map.Entry<K,V>> mappings = new ArrayList<>(map.entrySet());
-        Collections.sort(mappings, (o1, o2) ->
-                o1.getValue().compareTo(o2.getValue()));
-
-        // create an empty insertion-ordered LinkedHashMap
-        Map<K,V> linkedHashMap = new LinkedHashMap<>();
-
-        // for every map entry in the sorted list, insert key-value
-        // pair in LinkedHashMap
-        for (Map.Entry<K,V> entry: mappings) {
-            linkedHashMap.put(entry.getKey(), entry.getValue());
-        }
-
-        return linkedHashMap;
     }
 }
 
