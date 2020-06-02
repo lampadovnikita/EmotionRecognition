@@ -146,7 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
     void clearClassificationExpandableListView() {
         Map<String, List<Pair<String, String>>> emptyMap = new LinkedHashMap<>();
-        ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(emptyMap);
+        ClassificationExpandableListAdapter adapter =
+                new ClassificationExpandableListAdapter(emptyMap);
+
         classificationExpandableListView.setAdapter(adapter);
     }
 
@@ -218,7 +220,10 @@ public class MainActivity extends AppCompatActivity {
             InputStream inputStream = getContentResolver().openInputStream(uri);
             ExifInterface exifInterface = new ExifInterface(inputStream);
 
-            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            int orientation = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
             switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     degree = 90;
@@ -327,7 +332,11 @@ public class MainActivity extends AppCompatActivity {
                                             for (FirebaseVisionFace face : faces) {
                                                 Rect faceRect = face.getBoundingBox();
                                                 tmpCanvas.drawRect(faceRect, paint);
-                                                tmpCanvas.drawText(Integer.toString(faceId), faceRect.left + 20, faceRect.bottom - 20, paint);
+                                                tmpCanvas.drawText(
+                                                        Integer.toString(faceId),
+                                                        faceRect.left + 20,
+                                                        faceRect.bottom - 20,
+                                                        paint);
 
                                                 faceId++;
                                             }
@@ -363,7 +372,9 @@ public class MainActivity extends AppCompatActivity {
                                                 faceId++;
                                             }
 
-                                            ClassificationExpandableListAdapter adapter = new ClassificationExpandableListAdapter(item);
+                                            ClassificationExpandableListAdapter adapter =
+                                                    new ClassificationExpandableListAdapter(item);
+
                                             classificationExpandableListView.setAdapter(adapter);
 
                                             if (faces.size() == 1) {
@@ -401,7 +412,8 @@ public class MainActivity extends AppCompatActivity {
                         imageBitmap,
                         true);
 
-        LinkedHashMap<String, Float> sortedResult = (LinkedHashMap<String, Float>) SortingHelper.sortByValues(result);
+        LinkedHashMap<String, Float> sortedResult =
+                (LinkedHashMap<String, Float>) SortingHelper.sortByValues(result);
 
         ArrayList<String> reversedKeys = new ArrayList<>(sortedResult.keySet());
         Collections.reverse(reversedKeys);

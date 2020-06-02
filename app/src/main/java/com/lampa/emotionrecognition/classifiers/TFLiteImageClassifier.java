@@ -47,8 +47,12 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
             Formatter formatter = new Formatter();
 
             throw new IllegalArgumentException(formatter.format(
-                    "Input array length must be equal %1$d * %2$d * %3$d = %4$d, but actual length is %5$d",
-                    mImageHeight, mImageWidth, colorDimSize, mImageHeight * mImageWidth * colorDimSize,
+                    "Input array length must be equal %1$d * %2$d * %3$d = %4$d," +
+                            " but actual length is %5$d",
+                    mImageHeight,
+                    mImageWidth,
+                    colorDimSize,
+                    mImageHeight * mImageWidth * colorDimSize,
                     input.length).toString());
         }
 
@@ -86,7 +90,11 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
     }
 
     private float[] preprocessImage(Bitmap imageBitmap, boolean useFilter) {
-        Bitmap scaledImage = Bitmap.createScaledBitmap(imageBitmap, mImageWidth, mImageHeight, useFilter);
+        Bitmap scaledImage = Bitmap.createScaledBitmap(
+                imageBitmap,
+                mImageWidth,
+                mImageHeight,
+                useFilter);
 
         int[] greyScaleImage = ImagePreprocessor.toGreyScale(scaledImage);
 

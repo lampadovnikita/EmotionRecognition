@@ -30,7 +30,10 @@ public abstract class TFLiteClassifier implements IClassifier {
         mTFLiteInterpreterOptions = new Interpreter.Options().addDelegate(delegate);
 
         try {
-            mTFLiteInterpreter = new Interpreter(loadModel(modelFileName), mTFLiteInterpreterOptions);
+            mTFLiteInterpreter = new Interpreter(
+                    loadModel(modelFileName),
+                    mTFLiteInterpreterOptions);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

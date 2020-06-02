@@ -32,7 +32,8 @@ public class ImagePreprocessor {
                 bluePart = Color.blue(pixel);
 
                 // Переводим пиксель в чёрно-белый полутоновый формат
-                pixels[y * width + x] = (int) (redPart * RED2GS + greenPart * GREEN2GS + bluePart * BLUE2GS);
+                pixels[y * width + x] =
+                        (int) (redPart * RED2GS + greenPart * GREEN2GS + bluePart * BLUE2GS);
             }
         }
 

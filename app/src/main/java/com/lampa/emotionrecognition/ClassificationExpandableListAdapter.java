@@ -58,7 +58,9 @@ public class ClassificationExpandableListAdapter extends BaseExpandableListAdapt
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
+                             ViewGroup parent) {
+
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.expandable_list_group_classification, parent, false);
@@ -71,14 +73,18 @@ public class ClassificationExpandableListAdapter extends BaseExpandableListAdapt
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+                             View convertView, ViewGroup parent) {
+
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.expandable_list_item_classification, parent, false);
         }
 
         TextView labelTextView = convertView.findViewById(R.id.classification_label_text_view);
-        TextView probabilityTextView = convertView.findViewById(R.id.classification_probability_text_view);
+
+        TextView probabilityTextView =
+                convertView.findViewById(R.id.classification_probability_text_view);
 
         Pair<String, String> child = (Pair<String, String>) getChild(groupPosition, childPosition);
 
