@@ -35,6 +35,7 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.lampa.emotionrecognition.classifiers.TFLiteImageClassifier;
+import com.lampa.emotionrecognition.utils.ImageUtils;
 import com.lampa.emotionrecognition.utils.SortingHelper;
 
 import java.io.File;
@@ -189,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) {
-        int orientationAngle = getOrientationAngle(imageUri);
+        int orientationAngle = ImageUtils.getOrientationAngle(getContentResolver(), imageUri);
         if (orientationAngle != 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(orientationAngle);
@@ -204,35 +205,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return imageBitmap;
-    }
-
-    public int getOrientationAngle(Uri uri) {
-        int degree = 0;
-        try {
-            Log.d(TAG, uri.toString());
-
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-            ExifInterface exifInterface = new ExifInterface(inputStream);
-
-            int orientation = exifInterface.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    degree = 90;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    degree = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    degree = 270;
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return degree;
     }
 
     private void pickFromGallery() {

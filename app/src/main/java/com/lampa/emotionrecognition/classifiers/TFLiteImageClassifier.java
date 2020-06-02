@@ -1,6 +1,6 @@
 package com.lampa.emotionrecognition.classifiers;
 
-import com.lampa.emotionrecognition.utils.ImagePreprocessor;
+import com.lampa.emotionrecognition.utils.ImageUtils;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -100,7 +100,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
                 mImageHeight,
                 useFilter);
 
-        int[] greyScaleImage = ImagePreprocessor.toGreyScale(scaledImage);
+        int[] greyScaleImage = ImageUtils.toGreyScale(scaledImage);
 
         float[] preprocessedImage = new float[greyScaleImage.length];
         for (int i = 0; i < preprocessedImage.length; i++) {
