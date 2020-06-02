@@ -57,9 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final String FER2013_V1_MODEL_FILE_NAME = "fer2013_v1.tflite";
 
-    private final int FER2013_IMAGE_WIDTH = 48;
-    private final int FER2013_IMAGE_HEIGHT = 48;
-
     private final int SCALED_IMAGE_WIDTH = 720;
 
     private TFLiteImageClassifier mClassifier;
@@ -87,10 +84,7 @@ public class MainActivity extends AppCompatActivity {
         mClassifier = new TFLiteImageClassifier(
                 this.getAssets(),
                 FER2013_V1_MODEL_FILE_NAME,
-                getResources().getStringArray(R.array.emotions),
-                FER2013_IMAGE_WIDTH,
-                FER2013_IMAGE_HEIGHT,
-                TFLiteImageClassifier.ImageColorMode.GREYSCALE);
+                getResources().getStringArray(R.array.emotions));
 
         item = new LinkedHashMap<>();
 
