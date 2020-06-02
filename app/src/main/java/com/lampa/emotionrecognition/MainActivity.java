@@ -115,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
         classificationExpandableListView = findViewById(R.id.classification_expandable_list_view);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mClassifier.close();
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 

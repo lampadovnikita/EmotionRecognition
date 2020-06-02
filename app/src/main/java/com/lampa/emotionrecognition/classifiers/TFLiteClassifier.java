@@ -50,4 +50,8 @@ public abstract class TFLiteClassifier implements IClassifier {
 
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
+
+    public void close() {
+        mTFLiteInterpreter.close();
+    }
 }
