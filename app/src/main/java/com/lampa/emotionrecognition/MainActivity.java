@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String FER2013_V1_MODEL_FILE_NAME = "fer2013_v1.tflite";
 
-    private final int SCALED_IMAGE_WIDTH = 720;
+    private final int SCALED_IMAGE_BIGGEST_SIZE = 480;
 
     private TFLiteImageClassifier mClassifier;
 
@@ -164,17 +163,22 @@ public class MainActivity extends AppCompatActivity {
                     imageUri);
 
             int scaledHeight;
+            int scaledWidth;
+            float scaleFactor;
             if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
-                scaledHeight =
-                        (int) (imageBitmap.getHeight() *
-                                ((float) SCALED_IMAGE_WIDTH / imageBitmap.getWidth()));
+                scaledHeight = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledHeight / (float) imageBitmap.getHeight();
+                scaledWidth = (int) (imageBitmap.getWidth() * scaleFactor);
+
             } else {
-                scaledHeight = (SCALED_IMAGE_WIDTH / 3) * 4;
+                scaledWidth = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledWidth / (float) imageBitmap.getWidth();
+                scaledHeight = (int) (imageBitmap.getHeight() * scaleFactor);
             }
 
             scaledImageBitmap = Bitmap.createScaledBitmap(
                     imageBitmap,
-                    SCALED_IMAGE_WIDTH,
+                    scaledWidth,
                     scaledHeight,
                     true);
 
