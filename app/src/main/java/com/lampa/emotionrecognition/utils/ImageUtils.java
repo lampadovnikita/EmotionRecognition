@@ -3,6 +3,7 @@ package com.lampa.emotionrecognition.utils;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.net.Uri;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -36,6 +37,28 @@ public class ImageUtils {
             e.printStackTrace();
         }
         return degree;
+    }
+
+    public static Bitmap rotateToNormalOrientation(ContentResolver contentResolver,
+                                                   Bitmap imageBitmap, Uri imageUri) {
+
+        int orientationAngle = ImageUtils.getOrientationAngle(contentResolver, imageUri);
+        if (orientationAngle != 0) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientationAngle);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(
+                    imageBitmap,
+                    0,
+                    0,
+                    imageBitmap.getWidth(),
+                    imageBitmap.getHeight(),
+                    matrix,
+                    true);
+
+            return rotatedBitmap;
+        }
+
+        return imageBitmap;
     }
 
     public static int[] toGreyScale(Bitmap src) {

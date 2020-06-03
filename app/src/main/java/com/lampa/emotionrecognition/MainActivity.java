@@ -178,32 +178,16 @@ public class MainActivity extends AppCompatActivity {
                     scaledHeight,
                     true);
 
-            scaledImageBitmap = rotateToNormalOrientation(scaledImageBitmap, imageUri);
+            scaledImageBitmap = ImageUtils.rotateToNormalOrientation(
+                    getContentResolver(),
+                    scaledImageBitmap,
+                    imageUri);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return scaledImageBitmap;
-    }
-
-    public Bitmap rotateToNormalOrientation(Bitmap imageBitmap, Uri imageUri) {
-        int orientationAngle = ImageUtils.getOrientationAngle(getContentResolver(), imageUri);
-        if (orientationAngle != 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(orientationAngle);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(
-                    imageBitmap,
-                    0,
-                    0,
-                    imageBitmap.getWidth(),
-                    imageBitmap.getHeight(),
-                    matrix,
-                    true);
-
-            return rotatedBitmap;
-        }
-
-        return imageBitmap;
     }
 
     private void pickFromGallery() {
