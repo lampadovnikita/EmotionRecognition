@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ddd"
     android:orientation="vertical"
     android:padding="?android:listPreferredItemPaddingLeft"
     android:paddingStart="45dp"
-    android:paddingLeft="45dp"
-    android:background="#ddd">
+    android:paddingLeft="45dp">
 
     <TextView
         android:id="@+id/face_text_view"
