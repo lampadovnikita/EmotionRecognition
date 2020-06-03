@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         if (orientationAngle != 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(orientationAngle);
-            imageBitmap = Bitmap.createBitmap(
+            Bitmap rotatedBitmap = Bitmap.createBitmap(
                     imageBitmap,
                     0,
                     0,
@@ -199,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
                     imageBitmap.getHeight(),
                     matrix,
                     true);
+
+            return rotatedBitmap;
         }
 
         return imageBitmap;
