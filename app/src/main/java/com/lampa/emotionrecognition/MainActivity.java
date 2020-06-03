@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<Pair<String, String>> faceGroup = new ArrayList<>();
         for (String key : reversedKeys) {
-            String percentage = String.format("%.2f%%", sortedResult.get(key) * 100);
+            String percentage = String.format("%.1f%%", sortedResult.get(key) * 100);
             faceGroup.add(new Pair<>(key, percentage));
         }
 
