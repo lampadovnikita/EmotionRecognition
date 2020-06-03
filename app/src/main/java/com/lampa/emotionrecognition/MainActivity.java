@@ -111,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         mClassifier.close();
+
+        File picturesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        for (File tempFile : picturesDir.listFiles()) {
+            tempFile.delete();
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -135,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void clearClassificationExpandableListView() {
+    private void clearClassificationExpandableListView() {
         Map<String, List<Pair<String, String>>> emptyMap = new LinkedHashMap<>();
         ClassificationExpandableListAdapter adapter =
                 new ClassificationExpandableListAdapter(emptyMap);
@@ -277,18 +282,24 @@ public class MainActivity extends AppCompatActivity {
                                         Paint paint = new Paint();
                                         paint.setColor(Color.GREEN);
                                         paint.setStrokeWidth(2);
-                                        paint.setStyle(Paint.Style.STROKE);
-                                        paint.setTextSize(40);
+                                        paint.setTextSize(30);
 
+                                        final float textIndentFactor = 0.1f;
                                         if (!faces.isEmpty()) {
                                             int faceId = 1;
                                             for (FirebaseVisionFace face : faces) {
                                                 Rect faceRect = face.getBoundingBox();
+
+                                                paint.setStyle(Paint.Style.STROKE);
                                                 tmpCanvas.drawRect(faceRect, paint);
+
+                                                paint.setStyle(Paint.Style.FILL);
                                                 tmpCanvas.drawText(
                                                         Integer.toString(faceId),
-                                                        faceRect.left + 20,
-                                                        faceRect.bottom - 20,
+                                                        faceRect.left +
+                                                                faceRect.width() * textIndentFactor,
+                                                        faceRect.bottom -
+                                                                faceRect.height() * textIndentFactor,
                                                         paint);
 
                                                 faceId++;
