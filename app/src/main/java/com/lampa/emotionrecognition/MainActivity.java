@@ -47,8 +47,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity";
-
     private static final int GALLERY_REQUEST_CODE = 0;
     private static final int TAKE_PHOTO_REQUEST = 1;
 
@@ -58,52 +56,52 @@ public class MainActivity extends AppCompatActivity {
 
     private TFLiteImageClassifier mClassifier;
 
-    private ProgressBar classificationProgressBar;
+    private ProgressBar mClassificationProgressBar;
 
-    private ImageView imageView;
+    private ImageView mImageView;
 
-    private Button pickImageButton;
-    private Button takePhotoButton;
+    private Button mPickImageButton;
+    private Button mTakePhotoButton;
 
-    private ExpandableListView classificationExpandableListView;
+    private ExpandableListView mClassificationExpandableListView;
 
     private Uri mCurrentPhotoUri;
 
-    private Map<String, List<Pair<String, String>>> item;
+    private Map<String, List<Pair<String, String>>> mClassificationResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        classificationProgressBar = findViewById(R.id.classification_progress_bar);
+        mClassificationProgressBar = findViewById(R.id.classification_progress_bar);
 
         mClassifier = new TFLiteImageClassifier(
                 this.getAssets(),
                 FER2013_V1_MODEL_FILE_NAME,
                 getResources().getStringArray(R.array.emotions));
 
-        item = new LinkedHashMap<>();
+        mClassificationResult = new LinkedHashMap<>();
 
-        imageView = findViewById(R.id.face_image_view);
+        mImageView = findViewById(R.id.image_view);
 
-        pickImageButton = findViewById(R.id.pick_image_button);
-        pickImageButton.setOnClickListener(new View.OnClickListener() {
+        mPickImageButton = findViewById(R.id.pick_image_button);
+        mPickImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickFromGallery();
             }
         });
 
-        takePhotoButton = findViewById(R.id.take_photo_button);
-        takePhotoButton.setOnClickListener(new View.OnClickListener() {
+        mTakePhotoButton = findViewById(R.id.take_photo_button);
+        mTakePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takePhoto();
             }
         });
 
-        classificationExpandableListView = findViewById(R.id.classification_expandable_list_view);
+        mClassificationExpandableListView = findViewById(R.id.classification_expandable_list_view);
     }
 
     @Override
@@ -145,59 +143,20 @@ public class MainActivity extends AppCompatActivity {
         ClassificationExpandableListAdapter adapter =
                 new ClassificationExpandableListAdapter(emptyMap);
 
-        classificationExpandableListView.setAdapter(adapter);
+        mClassificationExpandableListView.setAdapter(adapter);
     }
 
     private void processImageRequestResult(Uri resultImageUri) {
         Bitmap scaledResultImageBitmap = getScaledImageBitmap(resultImageUri);
 
-        imageView.setImageBitmap(scaledResultImageBitmap);
-        item.clear();
+        mImageView.setImageBitmap(scaledResultImageBitmap);
+        mClassificationResult.clear();
 
         setCalculationStatusUI(true);
 
         detectFaces(scaledResultImageBitmap);
     }
 
-    private Bitmap getScaledImageBitmap(Uri imageUri) {
-        Bitmap scaledImageBitmap = null;
-
-        try {
-            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(),
-                    imageUri);
-
-            int scaledHeight;
-            int scaledWidth;
-            float scaleFactor;
-            if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
-                scaledHeight = SCALED_IMAGE_BIGGEST_SIZE;
-                scaleFactor = scaledHeight / (float) imageBitmap.getHeight();
-                scaledWidth = (int) (imageBitmap.getWidth() * scaleFactor);
-
-            } else {
-                scaledWidth = SCALED_IMAGE_BIGGEST_SIZE;
-                scaleFactor = scaledWidth / (float) imageBitmap.getWidth();
-                scaledHeight = (int) (imageBitmap.getHeight() * scaleFactor);
-            }
-
-            scaledImageBitmap = Bitmap.createScaledBitmap(
-                    imageBitmap,
-                    scaledWidth,
-                    scaledHeight,
-                    true);
-
-            scaledImageBitmap = ImageUtils.rotateToNormalOrientation(
-                    getContentResolver(),
-                    scaledImageBitmap,
-                    imageUri);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return scaledImageBitmap;
-    }
 
     private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -230,19 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, TAKE_PHOTO_REQUEST);
             }
         }
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "PNG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".png",
-                storageDir
-        );
-
-        return image;
     }
 
     private void detectFaces(Bitmap imageBitmap) {
@@ -288,7 +234,10 @@ public class MainActivity extends AppCompatActivity {
                                         if (!faces.isEmpty()) {
                                             int faceId = 1;
                                             for (FirebaseVisionFace face : faces) {
-                                                Rect faceRect = face.getBoundingBox();
+                                                Rect faceRect = getInnerRect(
+                                                        face.getBoundingBox(),
+                                                        imageBitmap.getWidth(),
+                                                        imageBitmap.getHeight());
 
                                                 paint.setStyle(Paint.Style.STROKE);
                                                 tmpCanvas.drawRect(faceRect, paint);
@@ -305,24 +254,14 @@ public class MainActivity extends AppCompatActivity {
                                                 faceId++;
                                             }
 
-                                            imageView.setImageBitmap(tmpBitmap);
+                                            mImageView.setImageBitmap(tmpBitmap);
 
                                             faceId = 1;
                                             for (FirebaseVisionFace face : faces) {
-                                                Rect faceRect = face.getBoundingBox();
-
-                                                if (faceRect.top < 0) {
-                                                    faceRect.top = 0;
-                                                }
-                                                if (faceRect.left < 0) {
-                                                    faceRect.left = 0;
-                                                }
-                                                if (faceRect.bottom > imageBitmap.getHeight()) {
-                                                    faceRect.bottom = imageBitmap.getHeight();
-                                                }
-                                                if (faceRect.right > imageBitmap.getWidth()) {
-                                                    faceRect.right = imageBitmap.getWidth();
-                                                }
+                                                Rect faceRect = getInnerRect(
+                                                        face.getBoundingBox(),
+                                                        imageBitmap.getWidth(),
+                                                        imageBitmap.getHeight());
 
                                                 Bitmap faceBitmap = Bitmap.createBitmap(
                                                         imageBitmap,
@@ -337,12 +276,12 @@ public class MainActivity extends AppCompatActivity {
                                             }
 
                                             ClassificationExpandableListAdapter adapter =
-                                                    new ClassificationExpandableListAdapter(item);
+                                                    new ClassificationExpandableListAdapter(mClassificationResult);
 
-                                            classificationExpandableListView.setAdapter(adapter);
+                                            mClassificationExpandableListView.setAdapter(adapter);
 
                                             if (faces.size() == 1) {
-                                                classificationExpandableListView.expandGroup(0);
+                                                mClassificationExpandableListView.expandGroup(0);
                                             }
 
                                         } else {
@@ -389,18 +328,92 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String groupName = getString(R.string.face) + " " + faceId;
-        item.put(groupName, faceGroup);
+        mClassificationResult.put(groupName, faceGroup);
     }
+
+    private Rect getInnerRect(Rect rect, int areaWidth, int areaHeight) {
+        Rect innerRect = new Rect(rect);
+
+        if (innerRect.top < 0) {
+            innerRect.top = 0;
+        }
+        if (innerRect.left < 0) {
+            innerRect.left = 0;
+        }
+        if (rect.bottom > areaHeight) {
+            innerRect.bottom = areaHeight;
+        }
+        if (rect.right > areaWidth) {
+            innerRect.right = areaWidth;
+        }
+
+        return innerRect;
+    }
+
+
+    private Bitmap getScaledImageBitmap(Uri imageUri) {
+        Bitmap scaledImageBitmap = null;
+
+        try {
+            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(),
+                    imageUri);
+
+            int scaledHeight;
+            int scaledWidth;
+            float scaleFactor;
+            if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
+                scaledHeight = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledHeight / (float) imageBitmap.getHeight();
+                scaledWidth = (int) (imageBitmap.getWidth() * scaleFactor);
+
+            } else {
+                scaledWidth = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledWidth / (float) imageBitmap.getWidth();
+                scaledHeight = (int) (imageBitmap.getHeight() * scaleFactor);
+            }
+
+            scaledImageBitmap = Bitmap.createScaledBitmap(
+                    imageBitmap,
+                    scaledWidth,
+                    scaledHeight,
+                    true);
+
+            scaledImageBitmap = ImageUtils.rotateToNormalOrientation(
+                    getContentResolver(),
+                    scaledImageBitmap,
+                    imageUri);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return scaledImageBitmap;
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "PNG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".png",
+                storageDir
+        );
+
+        return image;
+    }
+
 
     private void setCalculationStatusUI(boolean isCalculationRunning) {
         if (isCalculationRunning) {
-            classificationProgressBar.setVisibility(ProgressBar.VISIBLE);
-            takePhotoButton.setEnabled(false);
-            pickImageButton.setEnabled(false);
+            mClassificationProgressBar.setVisibility(ProgressBar.VISIBLE);
+            mTakePhotoButton.setEnabled(false);
+            mPickImageButton.setEnabled(false);
         } else {
-            classificationProgressBar.setVisibility(ProgressBar.INVISIBLE);
-            takePhotoButton.setEnabled(true);
-            pickImageButton.setEnabled(true);
+            mClassificationProgressBar.setVisibility(ProgressBar.INVISIBLE);
+            mTakePhotoButton.setEnabled(true);
+            mPickImageButton.setEnabled(true);
         }
     }
 }
