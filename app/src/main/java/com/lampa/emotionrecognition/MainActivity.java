@@ -231,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                                         paint.setTextSize(30);
 
                                         final float textIndentFactor = 0.1f;
+
                                         if (!faces.isEmpty()) {
                                             int faceId = 1;
                                             for (FirebaseVisionFace face : faces) {
@@ -251,18 +252,6 @@ public class MainActivity extends AppCompatActivity {
                                                                 faceRect.height() * textIndentFactor,
                                                         paint);
 
-                                                faceId++;
-                                            }
-
-                                            mImageView.setImageBitmap(tmpBitmap);
-
-                                            faceId = 1;
-                                            for (FirebaseVisionFace face : faces) {
-                                                Rect faceRect = getInnerRect(
-                                                        face.getBoundingBox(),
-                                                        imageBitmap.getWidth(),
-                                                        imageBitmap.getHeight());
-
                                                 Bitmap faceBitmap = Bitmap.createBitmap(
                                                         imageBitmap,
                                                         faceRect.left,
@@ -274,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
 
                                                 faceId++;
                                             }
+
+                                            mImageView.setImageBitmap(tmpBitmap);
 
                                             ClassificationExpandableListAdapter adapter =
                                                     new ClassificationExpandableListAdapter(mClassificationResult);
