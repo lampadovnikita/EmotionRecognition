@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST_CODE = 0;
     private static final int TAKE_PHOTO_REQUEST = 1;
 
-    private final String FER2013_V1_MODEL_FILE_NAME = "fer2013_v1.tflite";
+    private final String FER2013_V1_MODEL_FILE_NAME = "classifier.tflite";
 
     private final int SCALED_IMAGE_BIGGEST_SIZE = 480;
 
