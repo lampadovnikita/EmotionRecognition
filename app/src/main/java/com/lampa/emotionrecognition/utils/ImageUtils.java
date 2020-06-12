@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ImageUtils {
+    // Получаем угол поворота изображения в памяти
     public static int getOrientationAngle(ContentResolver contentResolver, Uri uri) {
         int degree = 0;
         try {
@@ -39,6 +40,7 @@ public class ImageUtils {
         return degree;
     }
 
+    // Поворачиваем изображение до нормального угла
     public static Bitmap rotateToNormalOrientation(ContentResolver contentResolver,
                                                    Bitmap imageBitmap, Uri imageUri) {
 
@@ -60,7 +62,7 @@ public class ImageUtils {
 
         return imageBitmap;
     }
-
+    // Переводим изображение в чёрно-белый полутоновый формат
     public static int[] toGreyScale(Bitmap src) {
         // Константы для перевода пикселя в чёрно-белый полутоновый формат
         final double RED2GS = 0.299;
