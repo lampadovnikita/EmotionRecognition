@@ -48,7 +48,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private static final int GALLERY_REQUEST_CODE = 0;
-    private static final int TAKE_PHOTO_REQUEST = 1;
+    private static final int TAKE_PHOTO_REQUEST_CODE = 1;
 
     private final String FER2013_V1_MODEL_FILE_NAME = "classifier.tflite";
 
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     processImageRequestResult(pickedImageUri);
                     break;
 
-                case TAKE_PHOTO_REQUEST:
+                case TAKE_PHOTO_REQUEST_CODE:
                     clearClassificationExpandableListView();
                     processImageRequestResult(mCurrentPhotoUri);
                     break;
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                         photoFile);
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
-                startActivityForResult(intent, TAKE_PHOTO_REQUEST);
+                startActivityForResult(intent, TAKE_PHOTO_REQUEST_CODE);
             }
         }
     }
