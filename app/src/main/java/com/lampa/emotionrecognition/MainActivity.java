@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST_CODE = 0;
     private static final int TAKE_PHOTO_REQUEST_CODE = 1;
 
-    private final String FER2013_V1_MODEL_FILE_NAME = "classifier.tflite";
+    private final String MODEL_FILE_NAME = "simple_classifier.tflite";
 
     private final int SCALED_IMAGE_BIGGEST_SIZE = 480;
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         mClassifier = new TFLiteImageClassifier(
                 this.getAssets(),
-                FER2013_V1_MODEL_FILE_NAME,
+                MODEL_FILE_NAME,
                 getResources().getStringArray(R.array.emotions));
 
         mClassificationResult = new LinkedHashMap<>();
