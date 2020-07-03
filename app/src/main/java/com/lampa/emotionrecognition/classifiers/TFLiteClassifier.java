@@ -3,6 +3,8 @@ package com.lampa.emotionrecognition.classifiers;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 
+import com.lampa.emotionrecognition.classifiers.behaviors.ClassifyBehavior;
+
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.gpu.GpuDelegate;
 
@@ -15,14 +17,26 @@ import java.util.Arrays;
 import java.util.List;
 
 // Абстрактыный классификатор, использующий формат tflite
-public abstract class TFLiteClassifier implements IClassifier {
+public abstract class TFLiteClassifier {
+    // Индекс тензора с параметрами входного изображения
+    protected final static int IMAGE_TENSOR_INDEX = 0;
+    // Индексы параметров входного изображения
+    protected final static int MODEL_INPUT_WIDTH_INDEX = 1;
+    protected final static int MODEL_INPUT_HEIGHT_INDEX = 2;
+
     protected AssetManager mAssetManager;
 
-    protected Interpreter mTFLiteInterpreter;
+    protected Interpreter mInterpreter;
 
     protected Interpreter.Options mTFLiteInterpreterOptions;
 
     protected List<String> mLabels;
+
+    protected int[] mInputShape;
+
+    protected int[] mOutputShape;
+
+    protected ClassifyBehavior classifyBehavior;
 
     TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
         mAssetManager = assetManager;
@@ -33,13 +47,16 @@ public abstract class TFLiteClassifier implements IClassifier {
 
         try {
             // Создаём интерпретатор загруженной модели
-            mTFLiteInterpreter = new Interpreter(
+            mInterpreter = new Interpreter(
                     loadModel(modelFileName),
                     mTFLiteInterpreterOptions);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        mInputShape = mInterpreter.getInputTensor(IMAGE_TENSOR_INDEX).shape();
+        mOutputShape = mInterpreter.getOutputTensor(IMAGE_TENSOR_INDEX).shape();
 
         mLabels = new ArrayList<>(Arrays.asList(labels));
     }
@@ -58,6 +75,6 @@ public abstract class TFLiteClassifier implements IClassifier {
 
     // Закрваем интерпретатор, чтобы избежать утечек памяти
     public void close() {
-        mTFLiteInterpreter.close();
+        mInterpreter.close();
     }
 }
