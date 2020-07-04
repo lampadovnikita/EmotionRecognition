@@ -57,8 +57,8 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
     private float[] preprocessImage(Bitmap imageBitmap, boolean useFilter) {
         Bitmap scaledImage = Bitmap.createScaledBitmap(
                 imageBitmap,
-                mInputShape[MODEL_INPUT_WIDTH_INDEX],
-                mInputShape[MODEL_INPUT_HEIGHT_INDEX],
+                InterpreterImageParams.getInputImageWidth(mInterpreter),
+                InterpreterImageParams.getInputImageHeight(mInterpreter),
                 useFilter);
 
         int[] greyScaleImage = ImageUtils.toGreyScale(scaledImage);

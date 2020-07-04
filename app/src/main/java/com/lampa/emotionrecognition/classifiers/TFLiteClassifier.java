@@ -32,10 +32,6 @@ public abstract class TFLiteClassifier {
 
     protected List<String> mLabels;
 
-    protected int[] mInputShape;
-
-    protected int[] mOutputShape;
-
     protected ClassifyBehavior classifyBehavior;
 
     public TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
@@ -54,9 +50,6 @@ public abstract class TFLiteClassifier {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        mInputShape = mInterpreter.getInputTensor(IMAGE_TENSOR_INDEX).shape();
-        mOutputShape = mInterpreter.getOutputTensor(IMAGE_TENSOR_INDEX).shape();
 
         mLabels = new ArrayList<>(Arrays.asList(labels));
     }
