@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                                         Paint paint = new Paint();
                                         paint.setColor(Color.GREEN);
                                         paint.setStrokeWidth(2);
-                                        paint.setTextSize(30);
+                                        paint.setTextSize(48);
 
                                         // Коэффициент для отступа номера лица
                                         final float textIndentFactor = 0.1f;
