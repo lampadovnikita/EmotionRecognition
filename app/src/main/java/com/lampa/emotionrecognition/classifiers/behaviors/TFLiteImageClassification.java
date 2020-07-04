@@ -1,7 +1,5 @@
 package com.lampa.emotionrecognition.classifiers.behaviors;
 
-import com.lampa.emotionrecognition.classifiers.behaviors.ClassifyBehavior;
-
 import org.tensorflow.lite.Interpreter;
 
 import java.util.Formatter;

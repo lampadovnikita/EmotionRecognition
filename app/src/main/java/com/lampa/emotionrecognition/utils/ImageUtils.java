@@ -62,6 +62,7 @@ public class ImageUtils {
 
         return imageBitmap;
     }
+
     // Переводим изображение в чёрно-белый полутоновый формат
     public static int[] toGreyScale(Bitmap src) {
         // Константы для перевода пикселя в чёрно-белый полутоновый формат

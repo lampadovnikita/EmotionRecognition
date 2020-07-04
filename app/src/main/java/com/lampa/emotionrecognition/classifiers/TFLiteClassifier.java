@@ -38,7 +38,7 @@ public abstract class TFLiteClassifier {
 
     protected ClassifyBehavior classifyBehavior;
 
-    TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
+    public TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
         mAssetManager = assetManager;
 
         // Выносим вычисление на GPU
@@ -60,6 +60,7 @@ public abstract class TFLiteClassifier {
 
         mLabels = new ArrayList<>(Arrays.asList(labels));
     }
+
     // Загружаем модель в буффер из файла
     public MappedByteBuffer loadModel(String modelFileName) throws IOException {
         AssetFileDescriptor fileDescriptor = mAssetManager.openFd(modelFileName);
