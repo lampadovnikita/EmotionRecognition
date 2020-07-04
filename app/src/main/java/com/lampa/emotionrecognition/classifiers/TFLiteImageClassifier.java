@@ -10,7 +10,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
-// Классификатор изображений, использующий формат tflite
+// Image classifier that uses tflite format
 public class TFLiteImageClassifier extends TFLiteClassifier {
 
     public TFLiteImageClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
@@ -28,7 +28,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
     private Map<String, Float> classify(float[] input) {
         float[][] outputArr = classifyBehavior.classify(input);
 
-        // Проверяем на соответствие с массиво строк, заданным в конструкторе
+        // Checked compliance with the array of strings specified in the constructor
         if (mLabels.size() != outputArr[0].length) {
             Formatter formatter = new Formatter();
 
@@ -40,7 +40,7 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
         }
 
         Map<String, Float> outputMap = new HashMap<>();
-        // Переводи массив с результатами в Map
+
         String predictedLabel;
         float probability;
         for (int i = 0; i < outputArr[0].length; i++) {
@@ -53,16 +53,18 @@ public class TFLiteImageClassifier extends TFLiteClassifier {
         return outputMap;
     }
 
-    // Предварительная обработка изображения
     private float[] preprocessImage(Bitmap imageBitmap, boolean useFilter) {
+        // Scale an image
         Bitmap scaledImage = Bitmap.createScaledBitmap(
                 imageBitmap,
                 InterpreterImageParams.getInputImageWidth(mInterpreter),
                 InterpreterImageParams.getInputImageHeight(mInterpreter),
                 useFilter);
 
+        // Translate an image to greyscale format
         int[] greyScaleImage = ImageUtils.toGreyScale(scaledImage);
 
+        // Translate an image to normalized float format [0f, 1f]
         float[] preprocessedImage = new float[greyScaleImage.length];
         for (int i = 0; i < preprocessedImage.length; i++) {
             preprocessedImage[i] = greyScaleImage[i] / 255.0f;

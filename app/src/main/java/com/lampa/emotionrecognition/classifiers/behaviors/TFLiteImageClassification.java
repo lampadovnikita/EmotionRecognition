@@ -25,7 +25,7 @@ public class TFLiteImageClassification implements ClassifyBehavior {
 
     @Override
     public float[][] classify(float[] input) {
-        // Проверяем размер входного массива на соответствие
+        // Check the size of the input array for compliance
         if (input.length != (mImageHeight * mImageWidth * mImageColorLength)) {
             Formatter formatter = new Formatter();
 
@@ -40,9 +40,9 @@ public class TFLiteImageClassification implements ClassifyBehavior {
             ).toString());
         }
 
-        // Переводим массив в матрицу
         float[][][][] formattedInput = new float[1][mImageHeight][mImageWidth][mImageColorLength];
 
+        // Translate the array into the matrix
         for (int y = 0; y < mImageHeight; y++) {
             for (int x = 0; x < mImageWidth; x++) {
                 for (int c = 0; c < mImageColorLength; c++) {
@@ -51,22 +51,20 @@ public class TFLiteImageClassification implements ClassifyBehavior {
             }
         }
 
-        // Массив с результатами
         float[][] outputArr = new float[1][mOutputLength];
 
-        // Запускаем классификацию
         mInterpreter.run(formattedInput, outputArr);
 
         return outputArr;
     }
 
     private void setImageParameters() {
-        // Получаем параметры входного изображения из модели
+        // Get an input image params from the interpreter
         mImageWidth = InterpreterImageParams.getInputImageWidth(mInterpreter);
         mImageHeight = InterpreterImageParams.getInputImageHeight(mInterpreter);
         mImageColorLength = InterpreterImageParams.getInputColorDimLength(mInterpreter);
 
-        // Получаем параметры выходного массива-результата
+        // Get an output length from the interpreter
         mOutputLength = InterpreterImageParams.getOutputLength(mInterpreter);
     }
 }

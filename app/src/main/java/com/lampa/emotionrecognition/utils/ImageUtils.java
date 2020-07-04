@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ImageUtils {
-    // Получаем угол поворота изображения в памяти
+        // Get the angle of rotation of an image in memory
     public static int getOrientationAngle(ContentResolver contentResolver, Uri uri) {
         int degree = 0;
         try {
@@ -40,7 +40,6 @@ public class ImageUtils {
         return degree;
     }
 
-    // Поворачиваем изображение до нормального угла
     public static Bitmap rotateToNormalOrientation(ContentResolver contentResolver,
                                                    Bitmap imageBitmap, Uri imageUri) {
 
@@ -63,14 +62,13 @@ public class ImageUtils {
         return imageBitmap;
     }
 
-    // Переводим изображение в чёрно-белый полутоновый формат
     public static int[] toGreyScale(Bitmap src) {
-        // Константы для перевода пикселя в чёрно-белый полутоновый формат
+        // Constants for converting a pixel to black and white grayscale
+        // Used in python PIL library
         final double RED2GS = 0.299;
         final double GREEN2GS = 0.587;
         final double BLUE2GS = 0.114;
 
-        // Информация о пикселе
         int pixel;
         int redPart;
         int greenPart;
@@ -81,17 +79,17 @@ public class ImageUtils {
 
         int[] pixels = new int[width * height];
 
-        // Проходим по каждому пикселю
+        // For each pixel
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 pixel = src.getPixel(x, y);
 
-                // Получаем все цветовые компоненты конкретного пикселя
+                // Get all the color components of a current pixel.
                 redPart = Color.red(pixel);
                 greenPart = Color.green(pixel);
                 bluePart = Color.blue(pixel);
 
-                // Переводим пиксель в чёрно-белый полутоновый формат
+                // Translate a pixel to grayscale format
                 pixels[y * width + x] =
                         (int) (redPart * RED2GS + greenPart * GREEN2GS + bluePart * BLUE2GS);
             }

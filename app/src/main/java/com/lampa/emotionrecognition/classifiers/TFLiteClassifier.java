@@ -16,14 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Абстрактыный классификатор, использующий формат tflite
+// Abstract classifier using tflite format
 public abstract class TFLiteClassifier {
-    // Индекс тензора с параметрами входного изображения
-    protected final static int IMAGE_TENSOR_INDEX = 0;
-    // Индексы параметров входного изображения
-    protected final static int MODEL_INPUT_WIDTH_INDEX = 1;
-    protected final static int MODEL_INPUT_HEIGHT_INDEX = 2;
-
     protected AssetManager mAssetManager;
 
     protected Interpreter mInterpreter;
@@ -37,16 +31,11 @@ public abstract class TFLiteClassifier {
     public TFLiteClassifier(AssetManager assetManager, String modelFileName, String[] labels) {
         mAssetManager = assetManager;
 
-        // Выносим вычисление на GPU
         GpuDelegate delegate = new GpuDelegate();
         mTFLiteInterpreterOptions = new Interpreter.Options().addDelegate(delegate);
 
         try {
-            // Создаём интерпретатор загруженной модели
-            mInterpreter = new Interpreter(
-                    loadModel(modelFileName),
-                    mTFLiteInterpreterOptions);
-
+            mInterpreter = new Interpreter(loadModel(modelFileName), mTFLiteInterpreterOptions);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -54,7 +43,6 @@ public abstract class TFLiteClassifier {
         mLabels = new ArrayList<>(Arrays.asList(labels));
     }
 
-    // Загружаем модель в буффер из файла
     public MappedByteBuffer loadModel(String modelFileName) throws IOException {
         AssetFileDescriptor fileDescriptor = mAssetManager.openFd(modelFileName);
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
@@ -67,7 +55,7 @@ public abstract class TFLiteClassifier {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
-    // Закрваем интерпретатор, чтобы избежать утечек памяти
+    // Close the interpreter to avoid memory leaks
     public void close() {
         mInterpreter.close();
     }
