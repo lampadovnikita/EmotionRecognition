@@ -198,6 +198,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Получаем масшабированное изображение
+    private Bitmap getScaledImageBitmap(Uri imageUri) {
+        Bitmap scaledImageBitmap = null;
+
+        try {
+            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(),
+                    imageUri);
+
+            int scaledHeight;
+            int scaledWidth;
+            // То, во сколько раз нужно изменить стороны изображения
+            float scaleFactor;
+            // Получаем большую сторону и отталкиваемся в масштабировании именно от большей стороны
+            if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
+                scaledHeight = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledHeight / (float) imageBitmap.getHeight();
+                scaledWidth = (int) (imageBitmap.getWidth() * scaleFactor);
+
+            } else {
+                scaledWidth = SCALED_IMAGE_BIGGEST_SIZE;
+                scaleFactor = scaledWidth / (float) imageBitmap.getWidth();
+                scaledHeight = (int) (imageBitmap.getHeight() * scaleFactor);
+            }
+
+            scaledImageBitmap = Bitmap.createScaledBitmap(
+                    imageBitmap,
+                    scaledWidth,
+                    scaledHeight,
+                    true);
+
+            // Изображение в памяти может храниться в повёрнутом состоянии
+            scaledImageBitmap = ImageUtils.rotateToNormalOrientation(
+                    getContentResolver(),
+                    scaledImageBitmap,
+                    imageUri);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return scaledImageBitmap;
+    }
+
     // Функция в которой происходит обнаружение лиц
     private void detectFaces(Bitmap imageBitmap) {
         // Параметры детектора
@@ -365,58 +409,14 @@ public class MainActivity extends AppCompatActivity {
         return innerRect;
     }
 
-    // Получаем масшабированное изображение
-    private Bitmap getScaledImageBitmap(Uri imageUri) {
-        Bitmap scaledImageBitmap = null;
-
-        try {
-            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(),
-                    imageUri);
-
-            int scaledHeight;
-            int scaledWidth;
-            // То, во сколько раз нужно изменить стороны изображения
-            float scaleFactor;
-            // Получаем большую сторону и отталкиваемся в масштабировании именно от большей стороны
-            if (imageBitmap.getHeight() > imageBitmap.getWidth()) {
-                scaledHeight = SCALED_IMAGE_BIGGEST_SIZE;
-                scaleFactor = scaledHeight / (float) imageBitmap.getHeight();
-                scaledWidth = (int) (imageBitmap.getWidth() * scaleFactor);
-
-            } else {
-                scaledWidth = SCALED_IMAGE_BIGGEST_SIZE;
-                scaleFactor = scaledWidth / (float) imageBitmap.getWidth();
-                scaledHeight = (int) (imageBitmap.getHeight() * scaleFactor);
-            }
-
-            scaledImageBitmap = Bitmap.createScaledBitmap(
-                    imageBitmap,
-                    scaledWidth,
-                    scaledHeight,
-                    true);
-
-            // Изображение в памяти может храниться в повёрнутом состоянии
-            scaledImageBitmap = ImageUtils.rotateToNormalOrientation(
-                    getContentResolver(),
-                    scaledImageBitmap,
-                    imageUri);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return scaledImageBitmap;
-    }
-
     // Создаём временный файл для изображения
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "PNG_" + timeStamp + "_";
+        String imageFileName = "ER_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,
-                ".png",
+                ".jpg",
                 storageDir
         );
 
