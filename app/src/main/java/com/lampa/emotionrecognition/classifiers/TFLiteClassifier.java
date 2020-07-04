@@ -78,4 +78,16 @@ public abstract class TFLiteClassifier {
     public void close() {
         mInterpreter.close();
     }
+
+    public Interpreter getInterpreter() {
+        return mInterpreter;
+    }
+
+    public List<String> getLabels() {
+        return mLabels;
+    }
+
+    public void setLabels(List<String> labels) {
+        mLabels = labels;
+    }
 }
