@@ -2,9 +2,9 @@
 This repository represents an android application performing recognition of facial emotions on an image.  
 
 ## The application
-To detect faces on an image the application uses Firebase ML Kit.
+To detect faces on an image the application uses [ML Kit](https://developers.google.com/ml-kit).
 After detection complete the face image area converted into greyscale 48*48 pixel format, each pixel represents as [0, 1] float number.
-Finally, converted area fed to the TensorFlow Light convolutional neural network model (simple_classifier.tflite).
+Finally, converted area fed to the [TensorFlow Light](https://www.tensorflow.org/lite/guide) convolutional neural network model (simple_classifier.tflite).
 The model provide output that consist of probabilities for each class: angry, disgust, fear, happy, neutral, sad, surprise.  
 
 ## The hybrid dataset
