@@ -4,3 +4,4 @@ This repository represents an android application performing recognition of faci
 ## Deep neural network used
 To classify facial emotions application uses trained deep neural network.
 This neural network has the following structure:
+<img src="/images/dnn_structure.png"  width="250" height="468">
