@@ -1,5 +1,16 @@
 # EmotionRecognition
-This repository represents an android application performing recognition of facial emotions on an image.
+This repository represents an android application performing recognition of facial emotions on an image.  
+
+## The hybrid dataset
+To train the CNN model there used hybrid dataset composed of the following datasets images:
+- CK+ (all images except contempt images)  
+- JAFFE (all images)  
+- FER2103 (all images)  
+- RAF-DB (all images but only 205 happy class images)  
+
+The resulting hybrid dataset has the following data distribution:  
+<img src="/images/data_distribution.png"  width="350" height="238">  
+
 
 ## The convolutional neural network used
 To classify facial emotions application uses trained deep convolutional neural network (simple_classifier.tflite).  
