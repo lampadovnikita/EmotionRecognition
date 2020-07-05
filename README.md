@@ -2,8 +2,10 @@
 This repository represents an android application performing recognition of facial emotions on an image.  
 
 ## The application
-To detect faces on an image the application uses Firebase ML Kit. After detection complete the face image area converted into greyscale 48*48 pixel format,
-but each pixel represents as [0, 1] float number.
+To detect faces on an image the application uses Firebase ML Kit.
+After detection complete the face image area converted into greyscale 48*48 pixel format, each pixel represents as [0, 1] float number.
+Finally, converted area fed to the TensorFlow Light convolutional neural network model (simple_classifier.tflite).
+The model provide output that consist of probabilities for each class: angry, disgust, fear, happy, neutral, sad, surprise.  
 
 ## The hybrid dataset
 To train the CNN model there used hybrid dataset composed of the following datasets images:
@@ -12,7 +14,7 @@ To train the CNN model there used hybrid dataset composed of the following datas
 - [FER2103](https://www.kaggle.com/deadskull7/fer2013) (all images).  
 - [RAF-DB](http://whdeng.cn/RAF/model1.html) (all images but only 205 happy class images).  
 
-The resulting hybrid dataset has the following data distribution:  
+The resulting hybrid dataset contains 46614 images and has the following data distribution:  
 <img src="/images/data_distribution.png"  width="350" height="238">  
 All images was converted into the FER2013 images format - greyscale 48*48 pixels.  
 
