@@ -1,8 +1,9 @@
 # EmotionRecognition
 This repository represents an android application performing recognition of facial emotions on an image.  
 
-## Application
-
+## The application
+To detect faces on an image the application uses Firebase ML Kit. After detection complete the face image area converted into greyscale 48*48 pixel format,
+but each pixel represents as [0, 1] float number.
 
 ## The hybrid dataset
 To train the CNN model there used hybrid dataset composed of the following datasets images:
@@ -16,8 +17,9 @@ The resulting hybrid dataset has the following data distribution:
 All images was converted into the FER2013 images format - greyscale 48*48 pixels.  
 
 ## The convolutional neural network used
-To classify facial emotions application uses trained deep convolutional neural network (simple_classifier.tflite). The 
-This neural network has the following structure:  
+To classify facial emotions the application uses trained deep convolutional neural network (simple_classifier.tflite).
+Each pixel converted from [0, 255] integer number to [0, 1] float number.
+The neural network has the following structure:  
 <img src="/images/dnn_structure.png"  width="250" height="468">  
 
 The DNN model trained on hybrid dataset. The dataset was split into two subsets: a train subset (80%) and a test subset (20%).  
