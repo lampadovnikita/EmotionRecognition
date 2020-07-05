@@ -11,7 +11,7 @@ The model provide output that consist of probabilities for each class: angry, di
 To train the CNN model there used hybrid dataset composed of the following datasets images:
 - [CK+](https://www.researchgate.net/publication/224165246_The_Extended_Cohn-Kanade_Dataset_CK_A_complete_dataset_for_action_unit_and_emotion-specified_expression) (all images except contempt images).  
 - [JAFFE](https://zenodo.org/record/3451524#.XuHa20UzZPY) (all images).  
-- [FER2103](https://www.kaggle.com/deadskull7/fer2013) (all images).  
+- [FER2013](https://www.kaggle.com/deadskull7/fer2013) (all images).  
 - [RAF-DB](http://whdeng.cn/RAF/model1.html) (all images but only 205 happy class images).  
 
 The resulting hybrid dataset contains 46614 images and has the following data distribution:  
