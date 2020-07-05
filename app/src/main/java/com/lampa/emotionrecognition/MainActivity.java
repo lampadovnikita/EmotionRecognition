@@ -167,9 +167,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
 
-        String[] mimeTypes = {"image/png", "image/jpg"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
         startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
